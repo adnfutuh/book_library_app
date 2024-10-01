@@ -7,3 +7,5 @@ enum Category {
   final String title;
   const Category({required this.title});
 }
+
+enum Availability { available, borrowed }
