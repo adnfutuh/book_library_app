@@ -5,7 +5,8 @@ import 'package:book_library_app/util/util.dart';
 import 'package:book_library_app/widget/menu_navbar.dart';
 import 'package:flutter/material.dart';
 
-import '../widget/book_card.dart';
+import 'books_page.dart';
+import 'favorite_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +17,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<BookModel> books = Dummy.books;
+  List<String> favBooks = [];
   int index = 0;
+  void toggleFav(String bookId) {
+    setState(() {
+      if (favBooks.contains(bookId)) {
+        favBooks.remove(bookId);
+      } else {
+        favBooks.add(bookId);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Util util = Util(context: context);
@@ -74,64 +86,31 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 20),
 
-            //-------------------MAIN SECTION
-
-            //-------------------IF PHONE DEVICE
-            if (util.isPhone)
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 5,
-                    childAspectRatio: 0.5,
-                  ),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    return BookCard(book: books[index]);
-                  },
-                ),
+            //----------------MAIN SECTION
+            Expanded(
+              child: SizedBox(
+                width: util.width * 0.8,
+                child: Column(children: [
+                  if (index == 0)
+                    BooksPage(
+                        util: util,
+                        books: books,
+                        favBooks: favBooks,
+                        toggleFav: toggleFav),
+                  if (index == 1)
+                    Builder(builder: (context) {
+                      List<BookModel> filteredBooks = [
+                        ...books.where((book) => favBooks.contains(book.bookId))
+                      ];
+                      return FavoritePage(
+                          util: util,
+                          books: filteredBooks,
+                          favBooks: favBooks,
+                          toggleFav: toggleFav);
+                    }),
+                ]),
               ),
-            const SizedBox(height: 20),
-
-            //-------------------MAIN SECTION
-
-            //-------------------IF TABLET DEVICE
-            if (util.isTablet)
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 5,
-                    childAspectRatio: 0.5,
-                  ),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    return BookCard(book: books[index]);
-                  },
-                ),
-              ),
-            const SizedBox(height: 20),
-
-            //-------------------MAIN SECTION
-
-            //-------------------IF PC DEVICE
-            if (util.isPc)
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 6,
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 5,
-                    childAspectRatio: 0.5,
-                  ),
-                  itemCount: books.length,
-                  itemBuilder: (context, index) {
-                    return BookCard(book: books[index]);
-                  },
-                ),
-              ),
+            )
           ],
         ),
       ),

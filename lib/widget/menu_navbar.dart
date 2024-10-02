@@ -28,13 +28,14 @@ class MenuNavbar extends StatelessWidget {
               children: [
                 Icon(
                   navItems[index].icon,
-                  color: index == activeIndex ? Colors.black : Colors.white,
+                  color: index == activeIndex ? Colors.white : Colors.grey,
                 ),
-                const SizedBox(height: 5),
+                if (index == activeIndex) const SizedBox(height: 5),
                 if (index == activeIndex)
                   Text(
                     navItems[index].name,
                     style: defaultTxt.copyWith(
+                      color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
